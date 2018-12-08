@@ -62,7 +62,7 @@ def process_entry(file_string):
 	new_array = [fare, number_of_passengers, distance, start_time_is_weekend, start_time_of_day,  pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude ]
 	return new_array
 
-def process_for_dates(source_file, destination_file):
+def clean_data(source_file, destination_file):
 	source_pointer = open(source_file, "r")
 	dest_pointer = open(destination_file, "w")
 	index = 0
@@ -91,7 +91,7 @@ def process_for_dates(source_file, destination_file):
 
 
 if __name__== "__main__":
-  process_for_dates("train.csv", "train_dates_done.csv")
+  clean_data("data/master_before_changes.csv", "data/master_before_knn.csv")
 
 
 

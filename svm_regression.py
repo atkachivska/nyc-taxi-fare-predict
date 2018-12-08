@@ -49,7 +49,7 @@ def run_sv_regression(train_file, test_file, C):
 
 if __name__== "__main__":
 	for i in range(1, 10):
-		run_sv_regression("data/train.csv", "data/test.csv", 2**i)
+		run_sv_regression("data/train.csv", "data/test_file.csv", 2**i)
 
 
 

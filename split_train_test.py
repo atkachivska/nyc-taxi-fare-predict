@@ -22,4 +22,4 @@ def split_train_test(source_file, dest_train_file, dest_test_file):
 		index = index + 1
 
 if __name__== "__main__":
-	split_train_test( "data/master_data.csv", "data/train.csv", "data/test.csv")
+	split_train_test( "data/master.csv", "data/train.csv", "data/test.csv")

@@ -40,8 +40,8 @@ def build_model_for_co_ordinates(clusters, data):
 
 def find_elbow(filename):
 	ndarray = load_file(filename)
-	data = splice_co_ordinates(ndarray)
-	K = range(50,52)
+	data = splice_time_of_day(ndarray)
+	K = range(2,50)
 	KM = [kmeans(data,k) for k in K]
 	centroids = [cent for (cent,var) in KM]
 	D_k = [cdist(data, cent, 'euclidean') for cent in centroids]
@@ -94,8 +94,8 @@ def write_back_to_file(source_file,  destination_file, co_ordinate_model, time_o
 
 
 
-def return_data(source_file, destination_file, co_ordinate_clusters, time_of_day_clusters):
-	ndarray = load_file(source_file)
+def run_knn(model_file, source_file, destination_file, co_ordinate_clusters, time_of_day_clusters):
+	ndarray = load_file(model_file)
 	co_ordinate_data = splice_co_ordinates(ndarray)
 	co_ordinate_model = build_model_for_co_ordinates(co_ordinate_clusters, co_ordinate_data)
 	time_of_day_data = splice_time_of_day(ndarray)
@@ -104,7 +104,7 @@ def return_data(source_file, destination_file, co_ordinate_clusters, time_of_day
 
 
 if __name__== "__main__":
-	return_data("train_dates_done.csv", "train_co_ord.csv",  100, 50)
+	run_knn("data/knn_source.csv", "data/master_before_knn.csv", "data/master.csv",  30, 20)
 
 
 
