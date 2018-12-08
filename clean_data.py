@@ -65,13 +65,12 @@ def process_entry(file_string):
 def process_for_dates(source_file, destination_file):
 	source_pointer = open(source_file, "r")
 	dest_pointer = open(destination_file, "w")
-
 	index = 0
 	while True:
 		try:
 			source_line = source_pointer.readline()
 
-			if source_line == "" or index > 100000:
+			if source_line == "" or index > 1000000:
 				source_pointer.close()
 				dest_pointer.close()
 				break

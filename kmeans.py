@@ -86,7 +86,7 @@ def write_back_to_file(source_file,  destination_file, co_ordinate_model, time_o
 		string_list.append(pickup_cluster.tolist()[0])
 		string_list.append(dropoff_cluster.tolist()[0])
 
-		
+
 
 		dest_string = ','.join(str(node) for node in string_list) + '\n'
 		destination_file_pointer.write(dest_string)
@@ -101,7 +101,6 @@ def return_data(source_file, destination_file, co_ordinate_clusters, time_of_day
 	time_of_day_data = splice_time_of_day(ndarray)
 	time_of_day_model = build_model_for_time_of_day(time_of_day_clusters, time_of_day_data)
 	write_back_to_file(source_file, destination_file, co_ordinate_model, time_of_day_model)
-	# print type(labels)
 
 
 if __name__== "__main__":
