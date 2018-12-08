@@ -1,7 +1,7 @@
 
 import time
 from datetime import datetime
-
+from haversine import haversine
 date_pattern = '%Y-%m-%d %H:%M:%S'
 #date format : 2012-05-12 05:09:05.0000002
 def convert_date_to_epoch(date_string):
@@ -48,15 +48,18 @@ def process_entry(file_string):
 	start_time_is_weekend = get_is_date_string_weekend(start_date_string)
 
 	fare = float(string_array[1])
+	if fare <= 0:
+		return None
 	pickup_longitude = float(string_array[3])
 	pickup_latitude = float(string_array[4])
 
 	dropoff_longitude = float(string_array[5])
 	dropoff_latitude = float(string_array[6])
+	number_of_passengers = int(string_array[7])
 
-	passengers = string_array[7]
+	distance = round(haversine((pickup_latitude, pickup_longitude), (dropoff_latitude, dropoff_longitude)), 2)
 
-	new_array = [fare, start_time_of_day, start_time_is_weekend, pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude ]
+	new_array = [fare, number_of_passengers, distance, start_time_is_weekend, start_time_of_day,  pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude ]
 	return new_array
 
 def process_for_dates(source_file, destination_file):
@@ -68,13 +71,14 @@ def process_for_dates(source_file, destination_file):
 		try:
 			source_line = source_pointer.readline()
 
-			if source_line == "" or index > 100:
+			if source_line == "" or index > 100000:
 				source_pointer.close()
 				dest_pointer.close()
 				break
 
 			dest_format_array = process_entry(source_line)
-			dest_format_array.insert(0,index)
+			if dest_format_array == None:
+				continue
 			#create a string out of array
 			dest_format_string = ','.join(str(node) for node in dest_format_array) + '\n'
 			dest_pointer.write(dest_format_string)
@@ -86,19 +90,6 @@ def process_for_dates(source_file, destination_file):
 
 	
 
-def main():
-	data = open("train.csv", "r+")
-
-	new_file = []
-	index = 0
-	while index < 10000:
-		new_file.append(data.readline(index))
-		index = index + 1
-
-	file_object  = open("smaller.csv", "w+")
-
-	for line in new_file:
-		file_object.write(line)
 
 if __name__== "__main__":
   process_for_dates("train.csv", "train_dates_done.csv")
