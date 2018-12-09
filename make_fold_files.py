@@ -1,3 +1,5 @@
+import random
+
 def main():
 
 	for index in range(0, 10):
@@ -68,11 +70,27 @@ def consolidate_folds(folds):
 			source_pointer.close()
 			destination_pointer.close()
 
+def build_batch_master_file(file_name):
+	source_file_pointer = open(file_name, "r")
+	batch_file_pointer = open("data/batch_master.csv", "w+")
+
+	source_file_size = 1000000
+	batch_size = 200000
+	index = 0
+	
+	while index < batch_size:
+		rand_index = random.randint(0, source_file_size)
+		line = source_file_pointer.readline(rand_index)
+		batch_file_pointer.write(line)
+		index = index + 1
+
+	batch_file_pointer.close()
+	source_file_pointer.close()
 
 
 
 if __name__ == '__main__':
 	folds = 10
-	# clear_fold_files(folds)
-	# create_folds("data/train.csv", folds)
+	build_batch_master_file("data/master.csv")
+	create_folds("data/batch_master.csv", folds)
 	consolidate_folds(folds)

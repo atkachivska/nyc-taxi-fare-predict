@@ -34,4 +34,5 @@ def convert_to_vw(source_file, destination_file, is_test):
 		destination_file_pointer.write(dest_string)
 
 if __name__== "__main__":
-	convert_to_vw("data/train_co_ord.csv", "data/master.vw", False)
+	convert_to_vw("data/train.csv", "data/train.vw", False)
+	convert_to_vw("data/test.csv", "data/test.vw", False)

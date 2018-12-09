@@ -1,61 +1,50 @@
 import statistics
 import numpy as np
 import os
+import math
 
 result_dir = "results/"
-data_file = "master.vw"
+train_file = "train.vw"
+test_file = "test.vw"
 prediction_file = "prediction.vw"
+model_file = "model.vw"
+test_command_string = "vw -t -d test.vw -i model.vw -p prediction.vw --quiet"
 
-def temp_error_file(train_file, prediction_file):
-	train_file_pointer = open(train_file, "r")
-	prediction_file_pointer = open(prediction_file, "r")
+def rmsle_func(y_pred, y) : 
+    	assert len(y) == len(y_pred)
+	terms_to_sum = [(math.log(y_pred[i] + 1) - math.log(y[i] + 1)) ** 2.0 for i,pred in enumerate(y_pred)]
+	return (sum(terms_to_sum) * (1.0/len(y))) ** 0.5
 
-	while True:
-	train_line = train_file_pointer.readline()
-	if train_line == "":
-		train_file_pointer.close()
-		prediction_file_pointer.close()
-		break
-
-	train_line_split = train_line.split("|")
-	train_label = float(train_line_split[0].strip())
-	prediction_value = prediction_file_pointer.readline().strip()
-	prediction = float(prediction_value)
-	error = abs(train_label - prediction)
-	error_list.append(error)
-	index = index + 1
-
-	print len(error_list), quantile
-	mean_error = statistics.mean(error_list)
-	std_dev_error = statistics.stdev(error_list)
-
-
-def get_error_stats(train_file, prediction_file, result_file_pointer, quantile):
-	train_file_pointer = open(train_file, "r")
+def get_error_stats(result_file_pointer, quantile):
+	test_file_pointer = open(test_file, "r")
 	prediction_file_pointer = open(prediction_file, "r")
 
 	error_list = []
+	y_pred = []
+	y_test = []
 	index = 0
 	while True:
-		train_line = train_file_pointer.readline()
-		if train_line == "":
-			train_file_pointer.close()
+		test_line = test_file_pointer.readline()
+		if test_line == "":
+			test_file_pointer.close()
 			prediction_file_pointer.close()
 			break
 
-		train_line_split = train_line.split("|")
-		train_label = float(train_line_split[0].strip())
+		test_line_split = test_line.split("|")
+		test_label = float(test_line_split[0].strip())
 		prediction_value = prediction_file_pointer.readline().strip()
 		prediction = float(prediction_value)
-		error = abs(train_label - prediction)
+		error = abs(test_label - prediction)
+		y_pred.append(prediction)
+		y_test.append(test_label)
 		error_list.append(error)
 		index = index + 1
 
-	print len(error_list), quantile
+	rmsle = rmsle_func(y_pred, y_test)
+	print rmsle
 	mean_error = statistics.mean(error_list)
 	std_dev_error = statistics.stdev(error_list)
-	print mean_error
-	print std_dev_error
+	print quantile, mean_error, std_dev_error
 	percentile_errors = []
 	for i in range(0, 100, 5):
 		percentile_errors.append(np.percentile(error_list, i))
@@ -74,28 +63,32 @@ def get_error_stats(train_file, prediction_file, result_file_pointer, quantile):
 def run_squared_regression(result_file, command_string):
 	result_file_pointer = open(result_file, "w+")
 	os.chdir(os.getcwd()+"/data")
-	command = command_string.format(data_file, prediction_file)
-	os.system(command)
-	get_error_stats(data_file, prediction_file, result_file_pointer, None)
+	print command_string
+	os.system(command_string) #train
+	os.system(test_command_string)
+	get_error_stats(result_file_pointer, None)
 
 def run_quantile_regression(result_file, command_string):
 	result_file_pointer = open(result_file, "w")
 	os.chdir(os.getcwd()+"/data")
 	for quantile in np.arange(0.1, 1, 0.1):
-		command = command_string.format(data_file, quantile, prediction_file)
+		command = command_string.format(quantile)
 		print command
-		# print os.system("pwd")
 		os.system(command)
-		get_error_stats(data_file, prediction_file, result_file_pointer, quantile)
+		os.system(test_command_string)
+		get_error_stats(result_file_pointer, quantile)
+		os.system("rm "+prediction_file)
+		os.system("rm "+model_file)
 
 
 if __name__ == '__main__':
-	quantile_command_string = "vw -d {0} --loss_function quantile --quantile_tau {1} --passes 1 -p {2} --quiet"
-	quantile_nn_command_string = "vw -d {0} --loss_function quantile --quantile_tau {1} --passes 1 -p {2} --quiet --nn 10"
-	squared_command_string = "vw -d {0} --loss_function squared --passes 1 -p {1} --quiet"
-	squared_nn_command_string = "vw -d {0} --loss_function squared --passes 1 -p {1} --quiet --nn 10"
-	# run_quantile_regression("results/quantile_results.csv", quantile_command_string)
-	# run_quantile_regression("results/quantile_results_nn.csv", quantile_nn_command_string)
-	# run_squared_regression("results/squared_results.csv", squared_command_string)
+	quantile_nn_train_command_string = "vw --nn 10 -d "+train_file+" --loss_function quantile --passes 10 --cache_file cache.ca --quantile_tau {0} -f "+model_file+" --quiet"
+	quantile_train_command_string = "vw -d "+train_file+" --loss_function quantile --passes 10 --cache_file cache.ca --quantile_tau {0} -f "+model_file+" --quiet"
+	squared_command_string = "vw -d "+train_file+" --loss_function squared --passes 10 --cache_file cache.ca -f "+model_file+" --quiet"
+	squared_nn_command_string = "vw --nn 10 -d "+train_file+" --loss_function squared --passes 10 --cache_file cache.ca -f "+model_file+" --quiet"
+	run_quantile_regression("results/quantile_results_nn.csv", quantile_nn_train_command_string)
+	run_quantile_regression("results/quantile_results.csv", quantile_train_command_string)
+	run_squared_regression("results/squared_results.csv", squared_command_string)
 	run_squared_regression("results/squared_nn_results.csv", squared_nn_command_string)
+	get_error_stats("any", 0.5)
 

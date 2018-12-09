@@ -20,7 +20,7 @@ def split_into_xy(data):
 	x, y = data[:, 1:], data[:, 0]
 	return (x, y)
 
-def build_linear_model(train_file):
+def build_linear_model(train_file, norm):
 	data = load_data(train_file)
 	x, y = split_into_xy(data)
 	x_normal = normalize(x, norm='l2')
@@ -29,7 +29,7 @@ def build_linear_model(train_file):
 	return model
 
 
-def test_model(model, test_file):
+def test_model(model, test_file, norm):
 	data = load_data(test_file)
 	x_test, y_test = split_into_xy(data)
 	x_normal = normalize(x_test, norm='l2')
@@ -67,4 +67,4 @@ def run_n_fold_cross_validation(folds):
 
 if __name__== "__main__":
 	# run_n_fold_cross_validation(10)
-	print run_linear_regression("data/train_small.csv", "data/test_small.csv")
+	print run_linear_regression("data/train.csv", "data/test.csv")
