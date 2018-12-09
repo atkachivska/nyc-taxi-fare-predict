@@ -8,7 +8,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import math
 from sklearn.preprocessing import normalize
-from xgboost import XGBRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 
 
 fold_path = "data/consolidated/"
@@ -24,8 +24,7 @@ def build_xgboost_model(train_file, c_val):
 	data = load_data(train_file)
 	x, y = split_into_xy(data)
 	x_normal = normalize(x, norm='l2')
-	xgb = XGBRegressor(n_estimators=100, learning_rate=0.50, gamma=0, subsample=0.75,
-                           colsample_bytree=1, max_depth=5)
+	xgb = GradientBoostingRegressor(loss="ls", alpha=0.5,n_estimators=100, learning_rate=0.08, max_depth=5)
 	model = xgb.fit(x_normal, y)
 
 	return model
@@ -72,7 +71,7 @@ def run_n_fold_cross_validation(folds):
 if __name__== "__main__":
 	# for i in range(1, 10):
 		# run_n_fold_cross_validation(10)
-	print run_xgboost("data/train_small.csv", "data/test_small.csv", 1)
+	print run_xgboost("data/train.csv", "data/test.csv", 1)
 
 
 

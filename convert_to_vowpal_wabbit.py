@@ -22,17 +22,16 @@ def convert_to_vw(source_file, destination_file, is_test):
 		drop_off = line_array[6]
 
 		if is_test == False:
-			dest_string = label + " | " + "0:"+passengers
+			dest_string = label + " | " + "passengers:"+passengers
 		else:
 			dest_string = "|"
-		dest_string = dest_string + " "+"1:"+distance
-		dest_string = dest_string + " "+"2:"+is_weekend
-		dest_string = dest_string + " "+"3:"+start_time
-		dest_string = dest_string + " "+"4:"+pickup
-		dest_string = dest_string + " "+"5:"+drop_off
+		dest_string = dest_string + " "+"distance:"+distance
+		dest_string = dest_string + " "+"is_weekend:"+is_weekend
+		dest_string = dest_string + " "+"start_time:"+start_time
+		dest_string = dest_string + " "+"pickup:"+pickup
+		dest_string = dest_string + " "+"drop_off:"+drop_off
 
 		destination_file_pointer.write(dest_string)
 
 if __name__== "__main__":
-	convert_to_vw("data/train.csv", "data/train.vw", False)
-	convert_to_vw("data/test.csv", "data/test.vw", True)
+	convert_to_vw("data/train_co_ord.csv", "data/master.vw", False)
