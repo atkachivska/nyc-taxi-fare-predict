@@ -6,7 +6,7 @@ def split_train_test(source_file, dest_train_file, dest_test_file):
 	dest_test_file_pointer = open(dest_test_file, "w")
 	index = 0
 	while True:
-		if index > 30000:
+		if index > 5000:
 			break
 		temp_string = source_file_pointer.readline()
 		if temp_string == "":
@@ -22,4 +22,4 @@ def split_train_test(source_file, dest_train_file, dest_test_file):
 		index = index + 1
 
 if __name__== "__main__":
-	split_train_test( "data/master.csv", "data/train.csv", "data/test.csv")
+	split_train_test( "data/master.csv", "data/train_small.csv", "data/test_small.csv")
