@@ -66,5 +66,4 @@ def run_n_fold_cross_validation(folds):
 
 
 if __name__== "__main__":
-	# run_n_fold_cross_validation(10)
-	print run_linear_regression("data/train.csv", "data/test.csv")
+	run_n_fold_cross_validation(10)

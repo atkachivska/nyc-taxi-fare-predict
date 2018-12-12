@@ -104,7 +104,7 @@ def run_knn(model_file, source_file, destination_file, co_ordinate_clusters, tim
 
 
 if __name__== "__main__":
-	run_knn("data/knn_source.csv", "data/master_before_knn.csv", "data/master.csv",  30, 20)
+	run_knn("data/knn_source.csv", "data/master_before_knn.csv", "data/master_data.csv",  30, 20)
 
 
 
