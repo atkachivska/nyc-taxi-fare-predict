@@ -10,6 +10,30 @@ data_size_list = [10000, 50000, 100000, 200000, 500000, 1000000]
 
 
 
+def quantiles_for_million_data_set():
+	file_name = analytics_folder+"linear_quartiles.csv"
+	file_pointer = open(file_name, "w+")
+	results_file = get_result_file("linear", "quantile", 1000000)
+	results_file_pointer = open(results_file, "r+")
+
+	file_pointer.write("Percentile,RMSE, STD DEV,"+ ",".join(str(round(quantile, 2)) for quantile in np.arange(0.1, 1.1, 0.1)) + '\n')
+	rmse_array = ["rsme"]
+	for line in results_file_pointer.readlines():
+		data_array = line.split(",")
+		result_array = []
+		result_array.append(round(float(data_array[0]), 2))
+		result_array.append(round(float(data_array[1]), 2))
+		result_array.append(round(float(data_array[2]), 2))
+		for index in range(4, 24, 2):
+			result_array.append(round(float(data_array[index]), 2))
+
+		file_pointer.write(','.join(str(val) for val in result_array) + '\n')
+
+	file_pointer.close()
+	results_file_pointer.close()
+
+
+
 
 def process_rmse():
 	file_name = analytics_folder+"rmse.csv"
@@ -65,4 +89,5 @@ def get_squared_rmse_error(data_size, algo_type):
 
 
 if __name__ == '__main__':
-	process_rmse()
+	quantiles_for_million_data_set()
+	# process_rmse()

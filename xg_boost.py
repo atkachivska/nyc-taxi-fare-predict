@@ -36,6 +36,7 @@ def build_xgboost_model(train_file, max_depth):
 	data = load_data(train_file)
 	x, y = split_into_xy(data)
 	x_normal = normalize(x, norm='l2')
+	
 	xgb = XGBRegressor(n_estimators=100, learning_rate=0.50, gamma=0, subsample=0.75, colsample_bytree=1, max_depth=max_depth)
 	model = xgb.fit(x_normal, y)
 
