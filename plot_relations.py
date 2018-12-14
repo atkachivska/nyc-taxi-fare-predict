@@ -17,11 +17,10 @@ def split_into_xy(data):
 	return (x, y)
 
 def plot_individual_feature(feature_x, y, feature):
-	print("here")
 	plt.scatter(feature_x, y)
-	plt.title("plot between two features")
+	plt.title("plot")
 	plt.xlabel(feature)
-	plt.ylabel("fare")
+	plt.ylabel("Fare")
 	plt.savefig(graph_path+"/"+feature+".png")
 	plt.show()
 	plt.close()
@@ -47,15 +46,15 @@ def plot_for_features(filename):
 		start_time_of_day.append(each[3])
 		pickup_longitude.append(each[4])
 		pickup_latitude.append(each[5])
-	plot_individual_feature(num_passengers, y, 'num_passengers').                                   #MOD 2: Make changes to labels accordingly
-	plot_individual_feature(distance, y, 'distance')
-	plot_individual_feature(start_time_is_weekend, y, 'start_time_is_weekend')
-	plot_individual_feature(start_time_of_day, y, 'start_time_of_day')
-	plot_individual_feature(pickup_longitude, y, 'pickup_longitude')
-	plot_individual_feature(pickup_latitude, y, 'pickup_latitude')
+	plot_individual_feature(num_passengers, y, 'Number of Passengers')                                  #MOD 2: Make changes to labels accordingly
+	plot_individual_feature(distance, y, 'Distance')
+	plot_individual_feature(start_time_is_weekend, y, 'Is Weekend')
+	plot_individual_feature(start_time_of_day, y, 'Time of Day')
+	plot_individual_feature(pickup_longitude, y, 'Pickup')
+	plot_individual_feature(pickup_latitude, y, 'DropoffJ')
 	# plot_individual_feature(dropoff_longitude, y, 'dropoff_longitude')
 	# plot_individual_feature(dropoff_latitude, y, 'dropoff_latitude')
 
 
 if __name__== "__main__":
-	print plot_for_features("data/train.csv")
+	print plot_for_features("data/master_data.csv")

@@ -87,28 +87,19 @@ def run_quantile_regression(train_file, test_file):
 
 	for qt in quantiles:
 		res = mod.fit(q = qt)
-		print(res.summary())
 		models.append(res)
-		lower_b = []
-		upper_b = []
-		for each in ['x[0]', 'x[1]', 'x[2]', 'x[3]', 'x[4]', 'x[5]']:
-			li = res.conf_int().ix[each].tolist()
-			lower_b.append(li[0])
-			upper_b.append(li[1])
+		(y_test, y_pred) = test_model(res, test_file)
 		
-		params.append(
-			[qt, 
-			res.params['Intercept'], 
-			[res.params['x[0]'], res.params['x[1]'], res.params['x[2]'], res.params['x[3]'], res.params['x[4]'], res.params['x[5]']], 
-			upper_b,
-			lower_b])
-		# (y_test, y_pred) = test_model(res, test_file)             #TODO: Check for multi features!!
-		# get_error_stats(y_test, y_pred, qt)
+		get_error_stats(y_test, y_pred, qt)
+		break
 
-	params = pd.DataFrame(data = params, columns = ['qt','intercept','x_coef','cf_lower_bound','cf_upper_bound'])
-	print(params)
+	# params = pd.DataFrame(data = params, columns = ['qt','intercept','x_coef','cf_lower_bound','cf_upper_bound'])
+	# print(params)
 
 
 
 if __name__== "__main__":
-	run_quantile_regression("data/train.csv", "data/test.csv")
+	run_quantile_regression("data/consolidated/test_file_0.txt", "data/consolidated/test_file_0.txt")
+
+
+

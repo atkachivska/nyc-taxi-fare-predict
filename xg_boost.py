@@ -10,9 +10,11 @@ import math
 from sklearn.preprocessing import normalize
 from xgboost import XGBRegressor
 import statistics
+from sklearn.ensemble import GradientBoostingRegressor
+from create_data_files import create_data_file, create_train_test
 
 fold_path = "data/consolidated/"
-results_file = "results/xg_boost.csv"
+result_path = "results/offline/"
 def rmsle_func(y_pred, y) : 
 	assert len(y) == len(y_pred)
 	terms_to_sum = []
@@ -37,7 +39,7 @@ def build_xgboost_model(train_file, max_depth):
 	x, y = split_into_xy(data)
 	x_normal = normalize(x, norm='l2')
 	
-	xgb = XGBRegressor(n_estimators=100, learning_rate=0.50, gamma=0, subsample=0.75, colsample_bytree=1, max_depth=max_depth)
+	xgb = GradientBoostingRegressor(n_estimators=100, learning_rate=0.20,subsample=0.75,  max_depth=max_depth, loss='quantile')
 	model = xgb.fit(x_normal, y)
 
 	return model
@@ -63,7 +65,7 @@ def run_xgboost(train_file, test_file, max_depth):
 		error_list.append(abs(y_test[index]- y_pred[index]))
 
 	std_dev_error = statistics.stdev(error_list)
-	return (rmse, rmsle, std_dev_error)
+	return [rmse, rmsle, std_dev_error]
 
 def run_n_fold_cross_validation(folds, max_depth, result_file_pointer):
 	
@@ -92,15 +94,23 @@ def run_n_fold_cross_validation(folds, max_depth, result_file_pointer):
 	print result_array
 	result_file_pointer.write(result_string)
 
-
-
-
-if __name__== "__main__":
-	result_file_pointer = open("results/xg_boost.csv", "w+")
+def run_validation():
 	for index in range(7, 9, 1):
 		run_n_fold_cross_validation(10, index, result_file_pointer)
 
-	result_file_pointer.close()
-
+def run_algo():
+	train_file = "data/train.csv"
+	test_file = "data/test.csv"
+	data_size = [10000, 50000, 100000, 200000, 500000, 1000000]
+	for data in data_size:
+		create_train_test(data, False)
+		ret_value = run_xgboost(train_file, test_file, 8)
+		print ret_value
+		file_name = result_path + "quantile_xgboost_"+str(data)+".csv"
+		file_pointer = open(file_name, "w+")
+		file_pointer.write(str(ret_value))
+		file_pointer.close()
+if __name__== "__main__":
+	run_algo()
 
 

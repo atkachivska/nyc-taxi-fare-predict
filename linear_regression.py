@@ -1,16 +1,15 @@
 import numpy as np
-from scipy.cluster.vq import kmeans,vq
-from scipy.spatial.distance import cdist
 import matplotlib.pyplot as plt
 import pandas
-from sklearn.cluster import KMeans
 from numpy import genfromtxt
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import math
 from sklearn.preprocessing import normalize
+from create_data_files import create_data_file, create_train_test
 
 fold_path = "data/consolidated/"
+result_path = "results/offline"
 
 def load_data(filename):
 	data = genfromtxt(filename, delimiter=',')
@@ -20,7 +19,7 @@ def split_into_xy(data):
 	x, y = data[:, 1:], data[:, 0]
 	return (x, y)
 
-def build_linear_model(train_file, norm):
+def build_linear_model(train_file):
 	data = load_data(train_file)
 	x, y = split_into_xy(data)
 	x_normal = normalize(x, norm='l2')
@@ -29,7 +28,7 @@ def build_linear_model(train_file, norm):
 	return model
 
 
-def test_model(model, test_file, norm):
+def test_model(model, test_file):
 	data = load_data(test_file)
 	x_test, y_test = split_into_xy(data)
 	x_normal = normalize(x_test, norm='l2')
@@ -66,4 +65,16 @@ def run_n_fold_cross_validation(folds):
 
 
 if __name__== "__main__":
-	run_n_fold_cross_validation(10)
+	train_file = "data/train.csv"
+	test_file = "data/test.csv"
+	data_size = [10000, 50000, 100000, 200000, 500000, 1000000]
+	for data in data_size:
+		create_train_test(data, False)
+		rmse = run_linear_regression(train_file, test_file)
+		print rmse
+		file_name = result_path + "squared_linear_"+str(data)+".csv"
+		file_pointer = open(file_name, "w+")
+		file_pointer.write(str(rmse))
+		file_pointer.close()
+
+

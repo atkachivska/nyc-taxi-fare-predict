@@ -40,7 +40,7 @@ def build_model_for_co_ordinates(clusters, data):
 
 def find_elbow(filename):
 	ndarray = load_file(filename)
-	data = splice_time_of_day(ndarray)
+	data = splice_co_ordinates(ndarray)
 	K = range(2,50)
 	KM = [kmeans(data,k) for k in K]
 	centroids = [cent for (cent,var) in KM]
@@ -52,12 +52,11 @@ def find_elbow(filename):
 	fig = plt.figure()
 	ax = fig.add_subplot(111)
 	ax.plot(K, avgWithinSS, 'b*-')
-	ax.plot(K[kIdx], avgWithinSS[kIdx], marker='o', markersize=12, 
-      markeredgewidth=2, markeredgecolor='r', markerfacecolor='None')
+	ax.plot(K[kIdx], avgWithinSS[kIdx])
 	plt.grid(True)
 	plt.xlabel('Number of clusters')
 	plt.ylabel('Average within-cluster sum of squares')
-	tt = plt.title('Elbow for K-Means clustering')
+	tt = plt.title('Elbow for K-Means clustering of co ordinates')
 	plt.show() 
 
 def write_back_to_file(source_file,  destination_file, co_ordinate_model, time_of_day_model):
@@ -104,7 +103,8 @@ def run_knn(model_file, source_file, destination_file, co_ordinate_clusters, tim
 
 
 if __name__== "__main__":
-	run_knn("data/knn_source.csv", "data/master_before_knn.csv", "data/master_data.csv",  30, 20)
+	find_elbow("data/knn_source.csv")
+	# run_knn("data/knn_source.csv", "data/master_before_knn.csv", "data/master_data.csv",  30, 20)
 
 
 
