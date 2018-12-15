@@ -16,7 +16,7 @@ def quantiles_for_million_data_set(algo_type):
 	results_file = get_result_file(algo_type, "quantile", 1000000)
 	results_file_pointer = open(results_file, "r+")
 
-	file_pointer.write("Percentile,Mean Error, STD DEV,"+ ",".join(str(round(quantile, 2)) for quantile in np.arange(0.1, 1.1, 0.1)) + '\n')
+	file_pointer.write("Percentile,Mean Error, RMSE, RMSLE, STD DEV,"+ ",".join(str(round(quantile, 2)) for quantile in np.arange(0.1, 1.1, 0.1)) + '\n')
 	rmse_array = ["rsme"]
 	for line in results_file_pointer.readlines():
 		data_array = line.split(",")
@@ -24,7 +24,9 @@ def quantiles_for_million_data_set(algo_type):
 		result_array.append(round(float(data_array[0]), 2))
 		result_array.append(round(float(data_array[1]), 2))
 		result_array.append(round(float(data_array[2]), 2))
-		for index in range(4, 24, 2):
+		result_array.append(round(float(data_array[3]), 2))
+		result_array.append(round(float(data_array[4]), 2))
+		for index in range(6, 26, 2):
 			result_array.append(round(float(data_array[index]), 2))
 
 		file_pointer.write(','.join(str(val) for val in result_array) + '\n')

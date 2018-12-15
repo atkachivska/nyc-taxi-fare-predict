@@ -2,13 +2,26 @@ import statistics
 import numpy as np
 import os
 import math
+from math import sqrt
 from create_data_files import create_train_test
+from sklearn.metrics import mean_squared_error
 
 test_file = "test.vw"
 prediction_file = "prediction.vw"
 model_file = "model.vw"
 test_command_string = "vw -t -d test.vw -i model.vw -p prediction.vw"
 train_command_string = "vw -d train.vw --loss_function {0} --passes 10 --cache_file cache.ca -f model.vw"
+
+
+def rmsle_func(real, predicted):
+    sum=0.0
+    for x in range(len(predicted)):
+        if predicted[x]<0 or real[x]<0: #check for negative values
+            continue
+        p = np.log(predicted[x]+1)
+        r = np.log(real[x]+1)
+        sum = sum + (p - r)**2
+    return (sum/len(predicted))**0.5
 
 def get_error_stats(result_file_pointer, quantile):
 	test_file_pointer = open(test_file, "r")
@@ -37,7 +50,8 @@ def get_error_stats(result_file_pointer, quantile):
 
 	mean_error = statistics.mean(error_list)
 	std_dev_error = statistics.stdev(error_list)
-	print quantile, mean_error, std_dev_error
+	rmse = sqrt(mean_squared_error(y_test, y_pred))
+	rmsle = rmsle_func(y_test, y_pred)
 	percentile_errors = []
 	for i in range(0, 100, 5):
 		percentile_errors.append(np.percentile(error_list, i))
@@ -46,6 +60,8 @@ def get_error_stats(result_file_pointer, quantile):
 	if quantile != None:
 		result_array.append(quantile)
 	result_array.append(mean_error)
+	result_array.append(rmse)
+	result_array.append(rmsle)
 	result_array.append(std_dev_error)
 	result_array.extend(percentile_errors)
 
