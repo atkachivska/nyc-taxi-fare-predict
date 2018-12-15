@@ -51,7 +51,7 @@ def plot_for_features(filename):
 	plot_individual_feature(start_time_is_weekend, y, 'Is Weekend')
 	plot_individual_feature(start_time_of_day, y, 'Time of Day')
 	plot_individual_feature(pickup_longitude, y, 'Pickup')
-	plot_individual_feature(pickup_latitude, y, 'DropoffJ')
+	plot_individual_feature(pickup_latitude, y, 'Dropoff')
 	# plot_individual_feature(dropoff_longitude, y, 'dropoff_longitude')
 	# plot_individual_feature(dropoff_latitude, y, 'dropoff_latitude')
 

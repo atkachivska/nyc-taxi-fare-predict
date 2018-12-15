@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 from haversine import haversine
 date_pattern = '%Y-%m-%d %H:%M:%S'
-#date format : 2012-05-12 05:09:05.0000002
+#date format : 2012-05-12 05:09:05
 def convert_date_to_epoch(date_string):
 	if len(date_string) > 19:
 		raise Exception("Date String not in right format") 
@@ -21,24 +21,32 @@ def get_is_date_string_weekend(date_string):
 	else:
 		return 1
 
+#takes the source file which is the train file from kaggle 
+#and a destination file pointer and moves upto 1M data points to the file
+def create_master_file(source_file, destination_file):
+	source_file_pointer = open(source_file, "r")
+	destination_file_pointer = open(destination_file, "w+")
 
-def get_number_of_lines(filename):
-	file_pointer = open(filename, "r")
 	index = 0
 	while True:
-		line = file_pointer.readline()
-		if line == "":
+		line = source_file_pointer.readline()
+		if line == "" or index == 1000000:
 			break
+
+		destination_file_pointer.write(line)
 		index = index + 1
-		if index % 10000000 == 0:
-			print line
 
-	print index
-
+#takes string of format 2009-06-15 17:26:21 UTC
+#and returns string of format 2009-06-15 17:26:21
 def clean_date_string(date_string):
 	return date_string[:19]
 
 
+#for each data point in the file,
+#converts date into time of day epoch
+#adds is_weekend feature
+#adds haversine distance between two co ordinates
+#returns all features in array format
 def process_entry(file_string):
 	string_array = file_string.split(",")
 
@@ -62,6 +70,7 @@ def process_entry(file_string):
 	new_array = [fare, number_of_passengers, distance, start_time_is_weekend, start_time_of_day,  pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude ]
 	return new_array
 
+#converts data into standard format from soruce file and puts it into destination file
 def clean_data(source_file, destination_file):
 	source_pointer = open(source_file, "r")
 	dest_pointer = open(destination_file, "w")
@@ -91,7 +100,8 @@ def clean_data(source_file, destination_file):
 
 
 if __name__== "__main__":
-  clean_data("data/master_before_changes.csv", "data/master_before_knn.csv")
+	create_master_file("../vault/train.csv", "data/master_before_changes.csv")
+  	# clean_data("data/master_before_changes.csv", "data/master_before_knn.csv")
 
 
 

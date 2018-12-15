@@ -1,4 +1,4 @@
-from online_quantile_regression import get_result_file
+from online_regression import get_result_file
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -10,13 +10,13 @@ data_size_list = [10000, 50000, 100000, 200000, 500000, 1000000]
 
 
 
-def quantiles_for_million_data_set():
-	file_name = analytics_folder+"linear_quartiles.csv"
+def quantiles_for_million_data_set(algo_type):
+	file_name = analytics_folder+algo_type+"_quantiles.csv"
 	file_pointer = open(file_name, "w+")
-	results_file = get_result_file("linear", "quantile", 1000000)
+	results_file = get_result_file(algo_type, "quantile", 1000000)
 	results_file_pointer = open(results_file, "r+")
 
-	file_pointer.write("Percentile,RMSE, STD DEV,"+ ",".join(str(round(quantile, 2)) for quantile in np.arange(0.1, 1.1, 0.1)) + '\n')
+	file_pointer.write("Percentile,Mean Error, STD DEV,"+ ",".join(str(round(quantile, 2)) for quantile in np.arange(0.1, 1.1, 0.1)) + '\n')
 	rmse_array = ["rsme"]
 	for line in results_file_pointer.readlines():
 		data_array = line.split(",")
@@ -35,36 +35,36 @@ def quantiles_for_million_data_set():
 
 
 
-def process_rmse():
-	file_name = analytics_folder+"rmse.csv"
+def process_mean_error():
+	file_name = analytics_folder+"mean_error.csv"
 
 	file_pointer = open(file_name, "w+")
 	data_str = "Type," + ','.join(str(node) for node in data_size_list) + '\n'
 	file_pointer.write(data_str)
 
-	file_pointer.write("Linear Squared," + ','.join(str(node) for node in get_rmse_error_list('linear', 'squared')) + '\n')
-	file_pointer.write("NN Squared," + ','.join(str(node) for node in get_rmse_error_list('nn', 'squared')) + '\n')
-	file_pointer.write("Linear Quantile," + ','.join(str(node) for node in get_rmse_error_list('linear', 'quantile')) + '\n')
-	file_pointer.write("NN Quantile," + ','.join(str(node) for node in get_rmse_error_list('nn', 'quantile')) + '\n')
+	file_pointer.write("Linear Squared," + ','.join(str(node) for node in get_mean_error_list('linear', 'squared')) + '\n')
+	file_pointer.write("NN Squared," + ','.join(str(node) for node in get_mean_error_list('nn', 'squared')) + '\n')
+	file_pointer.write("Linear Quantile," + ','.join(str(node) for node in get_mean_error_list('linear', 'quantile')) + '\n')
+	file_pointer.write("NN Quantile," + ','.join(str(node) for node in get_mean_error_list('nn', 'quantile')) + '\n')
 
 	file_pointer.close()
 
 
-def get_rmse_error_list(algo_type, loss_function):
+def get_mean_error_list(algo_type, loss_function):
 
 	ret_array = []
 	for data in data_size_list:
 		if loss_function == 'squared':
-			ret_array.append(get_squared_rmse_error(data, algo_type))
+			ret_array.append(get_squared_mean_error(data, algo_type))
 		else:
-			ret_array.append(get_quantile_rmse_error(data, algo_type))
+			ret_array.append(get_quantile_mean_error(data, algo_type))
 
 	return ret_array
 
 
 
 
-def get_quantile_rmse_error(data_size, algo_type):
+def get_quantile_mean_error(data_size, algo_type):
 	file_name = get_result_file(algo_type, "quantile", data_size)
 	file_pointer = open(file_name, "r")
 
@@ -77,7 +77,7 @@ def get_quantile_rmse_error(data_size, algo_type):
 	return min_rmse
 
 
-def get_squared_rmse_error(data_size, algo_type):
+def get_squared_mean_error(data_size, algo_type):
 	file_name = get_result_file(algo_type, "squared", data_size)
 	file_pointer = open(file_name, "r")
 	rmse_str = file_pointer.readline()
@@ -89,5 +89,6 @@ def get_squared_rmse_error(data_size, algo_type):
 
 
 if __name__ == '__main__':
-	quantiles_for_million_data_set()
-	# process_rmse()
+	quantiles_for_million_data_set("nn")
+	quantiles_for_million_data_set("linear")
+	# process_mean_error()

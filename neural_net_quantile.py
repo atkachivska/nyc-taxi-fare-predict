@@ -9,6 +9,7 @@ from sklearn.preprocessing import normalize
 from sklearn.metrics import mean_squared_error
 import math
 import tensorflow as tf
+from create_data_files import create_train_test
 
 quant = np.arange(0.1, 1, 0.1)
 result_file = 'results/quantile_neural.csv'
@@ -52,7 +53,7 @@ def build_models_on_quantile(train_file):
 	for qt in quant:
 		model = define_model()
 		model.compile(loss=lambda y, f: tilted_loss(qt,y,f), optimizer='adadelta')
-		model.fit(x_normal, y, epochs=2000, batch_size=34, verbose=0).   #TODO: discuss about the epoch size and batch size
+		model.fit(x_normal, y, epochs=2000, batch_size=34, verbose=0)   #TODO: discuss about the epoch size and batch size
 		#model.fit(x_normal, y, epochs=200, batch_size=100, verbose=0)
 		models.append({'qt':qt, 'model':model})
 	return models
@@ -90,4 +91,5 @@ def run_neural_net_quantile_regression(train_file, test_file):
 		get_error_stats(y_test, y_pred, result_file_pointer, element['qt'])
 
 if __name__== "__main__":
+	create_train_test(100, False)
 	print run_neural_net_quantile_regression("data/train.csv", "data/test.csv")
