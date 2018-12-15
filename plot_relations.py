@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 from numpy import genfromtxt
 
 
-#fare, number_of_passengers, distance, start_time_is_weekend, start_time_of_day,  pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude 
+# FEATURE: passengers, distance, is_weekend, start_time, pickup, drop off
 
 graph_path = "graphs/"
 num_of_points = 10000
+distance_threshold = 100
 
 def load_data(filename):
 	data = genfromtxt(filename, delimiter=',')
@@ -16,7 +17,10 @@ def split_into_xy(data):
 	x, y = data[:, 1:], data[:, 0]
 	return (x, y)
 
+
+
 def plot_individual_feature(feature_x, y, feature):
+	print feature
 	plt.scatter(feature_x, y)
 	plt.title("plot")
 	plt.xlabel(feature)
@@ -28,33 +32,44 @@ def plot_individual_feature(feature_x, y, feature):
 
 def plot_for_features(filename):
 	data = load_data(filename)
-	x, y = split_into_xy(data)
+	x, y_temp = split_into_xy(data)
 	x = x[:num_of_points]
-	y = y[:num_of_points]
+	y_temp = y_temp[:num_of_points]
 	num_passengers = []
+	y_num_passengers = []
 	distance = []
+	y_distance = []
 	start_time_is_weekend = []
+	y_start_time_is_weekend = []
 	start_time_of_day = []
+	y_start_time_of_day = []
 	pickup_longitude = []
+	y_pickup_longitude = []
 	pickup_latitude = []
-	dropoff_longitude = []
-	dropoff_latitude = []                                                                          #MOD 1:Input file format not clear, need to recheck with P.
-	for each in x:
-		num_passengers.append(each[0])	
-		distance.append(each[1])
-		start_time_is_weekend.append(each[2])
-		start_time_of_day.append(each[3])
-		pickup_longitude.append(each[4])
-		pickup_latitude.append(each[5])
-	plot_individual_feature(num_passengers, y, 'Number of Passengers')                                  #MOD 2: Make changes to labels accordingly
-	plot_individual_feature(distance, y, 'Distance')
-	plot_individual_feature(start_time_is_weekend, y, 'Is Weekend')
-	plot_individual_feature(start_time_of_day, y, 'Time of Day')
-	plot_individual_feature(pickup_longitude, y, 'Pickup')
-	plot_individual_feature(pickup_latitude, y, 'Dropoff')
-	# plot_individual_feature(dropoff_longitude, y, 'dropoff_longitude')
-	# plot_individual_feature(dropoff_latitude, y, 'dropoff_latitude')
+	y_pickup_latitude = []
+	i=0
+	while i<len(x):
+		num_passengers.append(x[i][0])	
+		y_num_passengers.append(y_temp[i])
+		if x[i][1] < distance_threshold:
+			distance.append(x[i][1])
+			y_distance.append(y_temp[i])
+		start_time_is_weekend.append(x[i][2])
+		y_start_time_is_weekend.append(y_temp[i])
+		start_time_of_day.append(x[i][3])
+		y_start_time_of_day.append(y_temp[i])
+		pickup_longitude.append(x[i][4])
+		y_pickup_longitude.append(y_temp[i])
+		pickup_latitude.append(x[i][5])
+		y_pickup_latitude.append(y_temp[i])
+		i = i+1
+	plot_individual_feature(num_passengers, y_num_passengers, 'Number of Passengers')
+	plot_individual_feature(distance, y_distance, 'Distance')
+	plot_individual_feature(start_time_is_weekend, y_start_time_is_weekend, 'Is Weekend')
+	plot_individual_feature(start_time_of_day, y_start_time_of_day, 'Time of Day')
+	plot_individual_feature(pickup_longitude, y_pickup_longitude, 'Pickup')
+	plot_individual_feature(pickup_latitude, y_pickup_latitude, 'Dropoff')
 
 
 if __name__== "__main__":
-	print plot_for_features("data/master_data.csv")
+	plot_for_features("data/master_data.csv")
