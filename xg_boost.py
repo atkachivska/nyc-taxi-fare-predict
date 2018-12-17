@@ -1,11 +1,11 @@
 import numpy as np
 from numpy import genfromtxt
 from sklearn.preprocessing import normalize
-from xgboost import XGBRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 from create_data_files import create_data_file, create_train_test
 from utils import offline_result_path, split_into_xy, load_data, batch_data_size_array, write_header_names, train_file, test_file, get_error_stats
 fold_path = "data/consolidated/"
-result_file = offline_result_path+'xgboost.csv'
+result_file = offline_result_path+'xgboost_squared_loss.csv'
 
 def split_into_xy(data):
 	x, y = data[:, 1:], data[:, 0]
@@ -16,7 +16,7 @@ def build_xgboost_model(train_file, max_depth):
 	x, y = split_into_xy(data)
 	x_normal = normalize(x, norm='l2')
 	
-	xgb = XGBRegressor(n_estimators=100, learning_rate=0.20,subsample=0.75,  max_depth=max_depth)
+	xgb = GradientBoostingRegressor(n_estimators=100, learning_rate=0.20,subsample=0.75,  max_depth=max_depth, loss='ls')
 	model = xgb.fit(x_normal, y)
 
 	return model
