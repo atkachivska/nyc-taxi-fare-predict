@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Sequential
 from keras.layers import Dense, Activation
-from numpy import genfromtxt
 import keras.backend as K
 from sklearn.preprocessing import normalize
 from sklearn.metrics import mean_squared_error

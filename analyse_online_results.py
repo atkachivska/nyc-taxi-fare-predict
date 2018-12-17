@@ -34,6 +34,13 @@ def quantiles_for_million_data_set(algo_type):
 	file_pointer.close()
 	results_file_pointer.close()
 
+def squared_for_million_data_set(algo_type):
+	file_name = analytics_folder+algo_type+"_squared.csv"
+	file_pointer = open(file_name, "w+")
+	results_file = get_result_file(algo_type, "squared", 1000000)
+	results_file_pointer = open(results_file, "r+")
+
+	file_pointer.write("Percentile,Mean Error, RMSE, RMSLE, STD DEV,"+ ",".join(str(round(quantile, 2)) for quantile in np.arange(0.1, 1.1, 0.1)) + '\n')
 
 
 
@@ -93,4 +100,4 @@ def get_squared_mean_error(data_size, algo_type):
 if __name__ == '__main__':
 	quantiles_for_million_data_set("nn")
 	quantiles_for_million_data_set("linear")
-	# process_mean_error()
+	process_mean_error()

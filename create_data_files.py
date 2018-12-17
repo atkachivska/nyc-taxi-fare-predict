@@ -1,5 +1,7 @@
 master_data_file = "data/master_data.csv"
 temp_data_file = "data/temp_data.csv"
+
+#splits the source file into train and test files
 def split_data(source_file, dest_train_file, dest_test_file):
 	source_file_pointer = open(source_file, "r")
 	dest_train_file_pointer = open(dest_train_file, "w")
@@ -20,6 +22,7 @@ def split_data(source_file, dest_train_file, dest_test_file):
 			dest_train_file_pointer.write(temp_string)
 		index = index + 1
 
+#takes number of lines and creates a data file of that size
 def create_data_file(number_of_lines):
 	source_file_pointer = open(master_data_file, "r")
 	destination_file_pointer = open(temp_data_file, "w+")
@@ -34,6 +37,9 @@ def create_data_file(number_of_lines):
 		destination_file_pointer.write(temp_string)
 		index = index + 1
 
+#takes number of lines, creates a master file, then splits them into train
+#and test.
+#if is_vowpal is set to true, it will convert the file to that format as well
 def create_train_test(number_of_lines, to_vowpal):
 	create_data_file(number_of_lines)
 	source_file = temp_data_file
@@ -45,7 +51,7 @@ def create_train_test(number_of_lines, to_vowpal):
 		convert_to_vw(dest_test_file, "data/test.vw")
 
 
-
+#converts data from standard to vw format
 def convert_to_vw(source_file, destination_file):
 	source_file_pointer = open(source_file, "r")
 	destination_file_pointer = open(destination_file, "w")
