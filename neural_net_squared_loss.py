@@ -14,7 +14,7 @@ import statistics
 from utils import get_error_stats, split_into_xy, train_file, test_file, offline_result_path, write_header_names, batch_data_size_array
 
 quant = [0.5]
-result_file = offline_result_path+'neural_network_quantile.csv'
+result_file = offline_result_path+'neural_network_squared_loss.csv'
 
 
 def load_data(filename):
@@ -23,7 +23,6 @@ def load_data(filename):
 
 def define_model():
     model = Sequential()
-    model.add(Dense(units=10, input_dim=6,activation='relu'))
     model.add(Dense(units=10, input_dim=6,activation='relu'))
     model.add(Dense(1))
     return model
@@ -47,7 +46,7 @@ def build_models_on_quantile(train_file):
 	x, y = split_into_xy(data)
 	x_normal = normalize(x, norm='l1')
 	model = define_model()
-	model.compile(loss=lambda y, f: tilted_loss(0.5,y,f), optimizer='adadelta')
+	model.compile(loss='mean_squared_error', optimizer='adadelta')
 	model.fit(x_normal, y, epochs=50, batch_size=34, verbose=0)
 	return model 
 
